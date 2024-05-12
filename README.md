@@ -2,11 +2,12 @@
 Automated fabric installer.
 
 ## Usage
-First run:
+1. Download Fabveri from the github releases page.
+2. Give executable permissions.
 ```console
-curl -O https://github.com/yagmire/fabveri/releases/download/v1.0.0/fabveri && chmod +x fabveri && ./fabveri
+chmod +x ./fabveri
 ```
-After already ran:
+3. Then run Fabveri
 ```console
 ./fabveri
 ```
