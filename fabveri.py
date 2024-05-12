@@ -1,7 +1,15 @@
-import os, requests, sys, tarfile, shutil
+import os, requests, tarfile, shutil, json, colorama
 print("Fabveri\n")
-fabricURL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.0.1/fabric-installer-1.0.1.jar"
-javaURL = "https://download.oracle.com/java/17/archive/jdk-17.0.9_linux-x64_bin.tar.gz"
+
+# Get latest links
+print("Getting latest dependencies download links.")
+if os.path.isfile("links.json"):
+    os.remove("links.json")
+links = json.loads(requests.get("https://raw.githubusercontent.com/yagmire/fabveri/main/links.json").text)
+fabricURL = links["fabric"]
+javaURL = links["java"]
+print("Receieved latest links.")
+
 # Getting fabric installer
 if os.path.isfile("fabricinstaller.jar"):
     print("Fabric installer already exists.")
@@ -23,9 +31,9 @@ else:
     java.close()
     print("Successfully downloaded java.")
 
-req_snapshot = input("Use a snapshot version? (y or n)\n")
+req_snapshot = input(f"{colorama.Fore.BLUE}Use a snapshot version? (y or n)\n")
 
-req_ver = input("What version of Minecraft?\n")
+req_ver = input(f"What version of Minecraft?{colorama.Fore.WHITE}\n")
 
 def ifSnapshot():
     if req_snapshot.lower() == "y":
