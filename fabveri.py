@@ -1,31 +1,44 @@
 import os, requests, tarfile, shutil, json, colorama
+from tqdm import tqdm
+
 print("Fabveri\n")
 
 # Get latest links
-print("Getting latest dependencies download links.")
 if os.path.isfile("links.json"):
     os.remove("links.json")
 links = json.loads(requests.get("https://raw.githubusercontent.com/yagmire/fabveri/main/links.json").text)
 fabricURL = links["fabric"]
 javaURL = links["java"]
-print("Receieved latest links.")
+print("Updated links.")
 
 # Getting fabric installer
 if os.path.isfile("fabricinstaller.jar"):
     print("Fabric installer already exists.")
-    pass
 else:
-    r = requests.get(fabricURL, allow_redirects=True)
-    open('fabricinstaller.jar', 'wb').write(r.content)
+    r = requests.get(fabricURL, stream=True)
+    total_size = int(r.headers.get('content-length', 0))
+    block_size = 1024 
+    progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
+    with open('fabricinstaller.jar', 'wb') as f:
+        for data in r.iter_content(block_size):
+            progress_bar.update(len(data))
+            f.write(data)
+    progress_bar.close()
     print("Successfully downloaded fabric installer.")
 
 # Getting java
 if os.path.isdir("java"):
     print("Java already exists.")
-    pass
 else:
-    r = requests.get(javaURL, allow_redirects=True)
-    open('java.tar.gz', 'wb').write(r.content)
+    r = requests.get(javaURL, stream=True)
+    total_size = int(r.headers.get('content-length', 0))
+    block_size = 1024  # 1 Kibibyte
+    progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
+    with open('java.tar.gz', 'wb') as f:
+        for data in r.iter_content(block_size):
+            progress_bar.update(len(data))
+            f.write(data)
+    progress_bar.close()
     java = tarfile.open('java.tar.gz') 
     java.extractall('./java')
     java.close()
