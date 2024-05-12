@@ -27,4 +27,4 @@ jobs:
     - run: pyinstaller --onefile --noconfirm --noupx fabveri.py
     - uses: actions/upload-artifact@v3
       with:
-        path: dist/fabveri.exe
+        path: dist/fabveri
