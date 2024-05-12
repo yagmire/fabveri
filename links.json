@@ -1,0 +1,4 @@
+{
+    "fabric": "https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.0.1/fabric-installer-1.0.1.jar",
+    "java": "https://download.oracle.com/java/17/archive/jdk-17.0.9_linux-x64_bin.tar.gz"
+  }
