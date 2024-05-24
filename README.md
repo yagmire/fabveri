@@ -11,3 +11,8 @@ chmod +x ./fabveri
 ```console
 ./fabveri
 ```
+
+To-Do:
+- Windows Build
+- Mulit-Launcher support
+- Automatic mod installation
