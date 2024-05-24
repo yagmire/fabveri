@@ -12,7 +12,7 @@ chmod +x ./fabveri
 ./fabveri
 ```
 
-To-Do:
+## To-Do:
 - Windows Build
 - Mulit-Launcher support
 - Automatic mod installation
