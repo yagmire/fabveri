@@ -6,6 +6,7 @@ print("Fabveri\n")
 # OS Detect
 if platform.system() != "Linux":
     if platform.system() != "Windows":
+        print("Unsupported system.")
         exit()
 
 # Get latest links
@@ -58,6 +59,7 @@ elif platform.system() == "Windows":
         print("Java already exists.")
     else:
         r = requests.get(javaURL, stream=True)
+        open('java.zip', 'wb').write(r.content)
         with zipfile.ZipFile("java.zip", 'r') as zip_ref:
             zip_ref.extractall("java")
         print("Successfully downloaded java.")
@@ -74,35 +76,58 @@ def ifSnapshot():
         return ""
     
 def cleanup():
-    # Fabric installer
-    try:
-        os.remove("fabricinstaller.jar")
-    except Exception as e:
-        print(f"\n{colorama.Fore.RED}There was an error deleting the fabric installer.\n{e}{colorama.Fore.WHITE}\n")
-    
-    # Java archive
-    try:
-        os.remove("java.tar.gz")
-    except Exception as e:
-        print(f"\n{colorama.Fore.RED}There was an error deleteing the java archive.\n{e}{colorama.Fore.WHITE}\n")
+    if platform.system() == 'Linux':
+        # Fabric installer
+        try:
+            os.remove("fabricinstaller.jar")
+        except Exception as e:
+            print(f"\n{colorama.Fore.RED}There was an error deleting the fabric installer.\n{e}{colorama.Fore.WHITE}\n")
+        
+        # Java archive
+        try:
+            os.remove("java.tar.gz")
+        except Exception as e:
+            print(f"\n{colorama.Fore.RED}There was an error deleteing the java archive.\n{e}{colorama.Fore.WHITE}\n")
 
-    # Java Folder
-    try:
-        shutil.rmtree("java")
-    except Exception as e:
-        print(f"\n{colorama.Fore.RED}There was an error deleting the java folder.\n{e}{colorama.Fore.WHITE}\n")
+        # Java Folder
+        try:
+            shutil.rmtree("java")
+        except Exception as e:
+            print(f"\n{colorama.Fore.RED}There was an error deleting the java folder.\n{e}{colorama.Fore.WHITE}\n")
+    elif platform.system() == "Windows":
+        # Fabric installer
+        try:
+            os.remove("fabricinstaller.jar")
+        except Exception as e:
+            print(f"\n{colorama.Fore.RED}There was an error deleting the fabric installer.\n{e}{colorama.Fore.WHITE}\n")
+        
+        # Java archive
+        try:
+            if os.path.isfile("java.zip"):
+                os.remove("java.zip")
+            else:
+                print("Java.zip doesn't exist so not deleting.")
+        except Exception as e:
+            print(f"\n{colorama.Fore.RED}There was an error deleteing the java archive.\n{e}{colorama.Fore.WHITE}\n")
+
+        # Java Folder
+        try:
+            shutil.rmtree("java")
+        except Exception as e:
+            print(f"\n{colorama.Fore.RED}There was an error deleting the java folder.\n{e}{colorama.Fore.WHITE}\n")
 
 print(f"Fabric installer: {os.path.isfile('fabricinstaller.jar')}")
 print(f"Java: {os.path.isdir('./java')}")
 
 if platform.system() == "Linux":
     operation = f"./java/jdk-17.0.9/bin/java -jar fabricinstaller.jar client {ifSnapshot()} -mcversion {req_ver}"
-    print(f"Running system command: {operation}")
+    print(f"Running system ({platform.system()}) command: {operation}")
     os.system(operation)
 elif platform.system() == "Windows":
-    operation = f"java/jdk-17.0.9/bin/java.exe -jar fabricinstaller.jar client {ifSnapshot()} -mcversion {req_ver}"
-    print(f"Running system command: {operation}")
+    operation = f"java\\jdk-17.0.9\\bin\\java.exe -jar fabricinstaller.jar client {ifSnapshot()} -mcversion {req_ver}"
+    print(f"Running system ({platform.system()}) command: {operation}")
     os.system(operation)
 
 cleanup()
-print("Cleaned up.")
+print("Cleaned up.\nNow closing.")
+exit()
