@@ -1,4 +1,4 @@
-import os, requests, tarfile, shutil, json, colorama
+import os, requests, tarfile, shutil, json, colorama, platform
 from tqdm import tqdm
 
 print("Fabveri\n")
@@ -62,7 +62,10 @@ def cleanup():
 print(f"Fabric installer: {os.path.isfile('fabricinstaller.jar')}")
 print(f"Java: {os.path.isdir('./java')}")
 
-os.system(f"./java/jdk-17.0.9/bin/java -jar fabricinstaller.jar client {ifSnapshot()} -mcversion {req_ver}")
+if platform.platform() == "Linux":
+    os.system(f"./java/jdk-17.0.9/bin/java -jar fabricinstaller.jar client {ifSnapshot()} -mcversion {req_ver}")
+elif platform.platform() == "Windows":
+    os.system(f"java/jdk-17.0.9/bin/java -jar fabricinstaller.jar client {ifSnapshot()} -mcversion {req_ver}")
 
 cleanup()
 print("Cleaned up.")
