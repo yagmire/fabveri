@@ -64,10 +64,22 @@ elif platform.system() == "Windows":
             zip_ref.extractall("java")
         print("Successfully downloaded java.")
 
+def modLocalInstall():
+    if os.path.isdir("mods") == False:
+        os.mkdir("mods")
+    if platform.system() == "Windows":
+        input("Press ENTER when you have all your mods in the mods folder.")
+        if os.path.isdir(f"{os.getenv('APPDATA')}\\.minecraft\\mods"):
+            shutil.rmtree(f"{os.getenv('APPDATA')}\\.minecraft\\mods")
+        shutil.copytree("mods", f"{os.getenv('APPDATA')}\\.minecraft\\mods")
+    else:
+        print(f"Local mod install is not supported for your platform ({platform.system()}) yet.")
 
 req_snapshot = input(f"{colorama.Fore.BLUE}Use a snapshot version? (y or n)\n{colorama.Fore.WHITE}")
 
 req_ver = input(f"{colorama.Fore.BLUE}What version of Minecraft?{colorama.Fore.WHITE}\n")
+
+ask_install_mods = input(f"{colorama.Fore.BLUE}Do you want to install mods automatically?\n{colorama.Fore.YELLOW}THIS WILL DELETE ALL EXISTING MODS INSIDE THE MODS FOLDER{colorama.Fore.WHITE}\n")
 
 def ifSnapshot():
     if req_snapshot.lower() == "y":
@@ -127,6 +139,9 @@ elif platform.system() == "Windows":
     operation = f"java\\jdk-17.0.9\\bin\\java.exe -jar fabricinstaller.jar client {ifSnapshot()} -mcversion {req_ver}"
     print(f"Running system ({platform.system()}) command: {operation}")
     os.system(operation)
+    if ask_install_mods.lower()[:1] == "y":
+        modLocalInstall()
+        print("Installed mods.")
 
 cleanup()
 print("Cleaned up.\nNow closing.")
