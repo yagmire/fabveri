@@ -24,7 +24,7 @@ jobs:
         architecture: "x64"
 
     - run: pip install -r requirements.txt pyinstaller
-    - run: pyinstaller --onefile --noconfirm --noupx fabveri.py
+    - run: pyinstaller --onefile --noconfirm --noupx --collect-all pyfiglet fabveri.py
     - uses: actions/upload-artifact@v3
       with:
         path: dist/fabveri
