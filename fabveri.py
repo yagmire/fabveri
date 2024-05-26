@@ -1,7 +1,9 @@
-import os, requests, tarfile, shutil, json, colorama, platform, zipfile
+import os, requests, tarfile, shutil, json, colorama, platform, zipfile, pyfiglet
 from tqdm import tqdm
 from sys import exit
-print("Fabveri\n")
+from time import sleep
+
+print(pyfiglet.figlet_format("fabveri", font="alligator"))
 
 # OS Detect
 if platform.system() != "Linux":
@@ -9,9 +11,11 @@ if platform.system() != "Linux":
         print("Unsupported system.")
         exit()
 
+# Download warning
+print(f"{colorama.Fore.YELLOW}Downloading 3 prerequisites, do not close the application while this is occuring. It may seem like the program is frozen. Starting in 3 seconds.{colorama.Fore.WHITE}")
+sleep(3)
+
 # Get latest links
-if os.path.isfile("links.json"):
-    os.remove("links.json")
 links = json.loads(requests.get("https://raw.githubusercontent.com/yagmire/fabveri/main/links.json").text)
 fabricURL = links["fabric"]
 if platform.system() == "Linux":
@@ -25,14 +29,7 @@ if os.path.isfile("fabricinstaller.jar"):
     print("Fabric installer already exists.")
 else:
     r = requests.get(fabricURL, stream=True)
-    total_size = int(r.headers.get('content-length', 0))
-    block_size = 1024 
-    progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
-    with open('fabricinstaller.jar', 'wb') as f:
-        for data in r.iter_content(block_size):
-            progress_bar.update(len(data))
-            f.write(data)
-    progress_bar.close()
+    open('fabricinstaller.jar', 'wb').write(r.content)
     print("Successfully downloaded fabric installer.")
 
 # Getting java
@@ -41,14 +38,7 @@ if platform.system() == "Linux":
         print("Java already exists.")
     else:
         r = requests.get(javaURL, stream=True)
-        total_size = int(r.headers.get('content-length', 0))
-        block_size = 1024  # 1 Kibibyte
-        progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
-        with open('java.tar.gz', 'wb') as f:
-            for data in r.iter_content(block_size):
-                progress_bar.update(len(data))
-                f.write(data)
-        progress_bar.close()
+        open('java.tar.gz', 'wb').write(r.content)
         java = tarfile.open('java.tar.gz') 
         java.extractall('./java')
         java.close()
@@ -70,8 +60,10 @@ def modLocalInstall():
     if platform.system() == "Windows":
         input("Press ENTER when you have all your mods in the mods folder.")
         if os.path.isdir(f"{os.getenv('APPDATA')}\\.minecraft\\mods"):
-            shutil.rmtree(f"{os.getenv('APPDATA')}\\.minecraft\\mods")
-        shutil.copytree("mods", f"{os.getenv('APPDATA')}\\.minecraft\\mods")
+            if os.path.isdir(f"{os.getenv('APPDATA')}\\.minecraft\\mods"):
+                shutil.rmtree(f"{os.getenv('APPDATA')}\\.minecraft\\mods")
+            os.system(f"xcopy {os.getcwd()}\\mods {os.getenv('APPDATA')}\\.minecraft\\mods /E /C /H /I")
+        #shutil.copytree("mods", f"{os.getenv('APPDATA')}\\.minecraft\\mods")
     else:
         print(f"Local mod install is not supported for your platform ({platform.system()}) yet.")
 
@@ -144,5 +136,5 @@ elif platform.system() == "Windows":
         print("Installed mods.")
 
 cleanup()
-print("Cleaned up.\nNow closing.")
+print(f"Cleaned up.\n{colorama.Fore.GREEN}Now closing.{colorama.Fore.WHITE}")
 exit()
